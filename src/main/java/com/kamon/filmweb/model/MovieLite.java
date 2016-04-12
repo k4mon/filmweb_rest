@@ -1,20 +1,12 @@
 package com.kamon.filmweb.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 public class MovieLite {
 
-    @JsonProperty
     private String name;
-
-    @JsonProperty
     private String movieURL;
-
-    @JsonProperty
     private List<String> genres;
-
 
 
     public String getName() {
@@ -54,5 +46,10 @@ public class MovieLite {
             }
         }
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Name: " + getName();
     }
 }

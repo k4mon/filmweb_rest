@@ -1,8 +1,6 @@
 package com.kamon.filmweb.handlers;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.common.collect.Lists;
 import com.kamon.filmweb.model.MovieFull;
 import com.kamon.filmweb.model.MovieLite;
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +9,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SiteParser {
 
@@ -45,7 +44,6 @@ public class SiteParser {
         Elements content1 = doc.getElementsByAttribute("href");
 
         for (org.jsoup.nodes.Element element : content1) {
-            System.out.println(element);
             if (element.hasClass("fNoImg0")) {
                 if (isFirst) {
                     list.add(createMovieLite(currentMovie, currentTitle, currentGenres));
