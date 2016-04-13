@@ -1,24 +1,14 @@
 package com.kamon.filmweb.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class MovieFull {
 
-    @JsonProperty
     private String name;
-    @JsonProperty
     private String year;
-    @JsonProperty
     private String director;
-    @JsonProperty
     private String genre;
-    @JsonProperty
     private String production;
-    @JsonProperty
     private String description;
-    @JsonProperty
     private String posterURL;
-    @JsonProperty
     private String movieURL;
 
     public String getName() {
@@ -83,6 +73,11 @@ public class MovieFull {
 
     public void setMovieURL(String movieURL) {
         this.movieURL = movieURL;
+    }
+
+    @Override
+    public String toString() {
+        return "Name: " + getName();
     }
 
 }

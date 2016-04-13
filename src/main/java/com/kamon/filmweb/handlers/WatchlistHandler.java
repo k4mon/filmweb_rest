@@ -2,15 +2,16 @@ package com.kamon.filmweb.handlers;
 
 import com.google.common.collect.Lists;
 import com.kamon.filmweb.model.MovieLite;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 public class WatchlistHandler {
 
-    private final Random GENERATOR = new Random();
-    private SiteDownloader connector = new SiteDownloader();
+    private static final String WATCHLIST_TEMPLATE = "http://www.filmweb.pl/user/%s/films/wanna-see";
     private SiteParser parser = new SiteParser();
 
     public List<MovieLite> createSharedMovieList(List<String> userlist, List<String> genres) {
@@ -18,10 +19,10 @@ public class WatchlistHandler {
         List<MovieLite> list = Lists.newArrayList();
         for (String user : userlist) {
             if (first) {
-                list.addAll(createMovieMap(user));
+                list.addAll(getMovieListFromWeb(user));
                 first = false;
             } else {
-                list.retainAll(createMovieMap(user));
+                list.retainAll(getMovieListFromWeb(user));
             }
         }
 
@@ -31,20 +32,27 @@ public class WatchlistHandler {
         return list;
     }
 
-    public List<MovieLite> createMovieMap(String username) {
-        return getMovieMapFromWeb(username);
-    }
-
-    private List<MovieLite> getMovieMapFromWeb(String username) {
-        return parser.parseWatchlistSourceForMovieList(connector.getWatchlistForUser(username));
+    private List<MovieLite> getMovieListFromWeb(String username) {
+        return parser.parseWatchlistSourceForMovieList(tryToGetWatchlistForUser(username));
     }
 
     private void filterMovieList(List<MovieLite> movieList, List<String> genres) {
-        for (Iterator<MovieLite> iterator = movieList.iterator(); iterator.hasNext();) {
+        for (Iterator<MovieLite> iterator = movieList.iterator(); iterator.hasNext(); ) {
             MovieLite movieLite = iterator.next();
             if (!movieLite.getGenres().containsAll(genres)) {
                 iterator.remove();
             }
         }
+    }
+
+    private String tryToGetWatchlistForUser(String username) {
+        String watchlistSource = StringUtils.EMPTY;
+        try {
+            watchlistSource = Jsoup.connect(String.format(WATCHLIST_TEMPLATE, username)).get().html();
+        } catch (IOException e) {
+            System.out.println(String.format("Failed to fetch watchlist source for user: %s, with error: %s", username, e.getMessage()));
+            e.printStackTrace();
+        }
+        return watchlistSource;
     }
 }
